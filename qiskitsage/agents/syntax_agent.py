@@ -28,16 +28,14 @@ class SyntaxAgent(BaseAgent):
         )
 
         # Parse JSON response
-
         if isinstance(resp, str):
             content = resp
-        elif hasattr(resp, 'content') and isinstance(resp.content, list):
-            if hasattr(resp.content[0], 'text'):
-                content = resp.content[0].text
-            else:
-                content = str(resp.content[0])
+        elif hasattr(resp, 'content') and isinstance(resp.content, list) and len(resp.content) > 0:
+            # Use getattr to safely extract text, fallback to str representation
+            content = getattr(resp.content[0], 'text', str(resp.content[0]))
         else:
             content = str(resp)
+
         # Strip ```json fences if present
         if content.strip().startswith('```'):
             if '```json' in content:
