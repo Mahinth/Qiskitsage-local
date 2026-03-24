@@ -23,6 +23,7 @@ from qiskitsage.agents.semantic_agent import SemanticAgent
 from qiskitsage.agents.ffi_agent import FFIAgent
 from qiskitsage.models import ReviewResult, Finding
 from qiskitsage.renderer import Renderer
+from qiskitsage.agents.judge_agent import JudgeAgent
 
 
 def main():
@@ -133,12 +134,47 @@ Examples:
     if args.verbose:
         print("   -> Generating final report...")
 
-    judge = JudgeAgent()
-    try:
-        result = judge.generate_report(graph, all_findings)
-    except Exception as e:
-        print(f"[ERROR] Error generating report: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Create result object from findings
+    critical_count = sum(1 for f in all_findings if f.severity.value == "CRITICAL")
+    high_count = sum(1 for f in all_findings if f.severity.value == "HIGH")
+    
+    semantic_regression_detected = any(f.agent_id == 'SA-SEM' and f.severity.value == 'CRITICAL' for f in all_findings)
+    ffi_risk_detected = any(f.agent_id == 'SA-FFI' and f.severity.value in ('CRITICAL', 'HIGH') for f in all_findings)
+
+    execution_time_seconds = time.time() - start_time
+
+    # Extract PR number from URL
+    pr_number = int(args.pr.split('/pull/')[-1])
+
+    # Create temporary result for rendering markdown
+    temp_result = ReviewResult(
+        pr_url=args.pr,
+        pr_number=pr_number,
+        findings=all_findings,
+        agents_run=agent_ids_run,
+        execution_time_seconds=execution_time_seconds,
+        total_findings=len(all_findings),
+        critical_count=critical_count,
+        high_count=high_count,
+        semantic_regression_detected=semantic_regression_detected,
+        ffi_risk_detected=ffi_risk_detected,
+        comment_markdown=""
+    )
+
+    # Render markdown and create final result
+    result = ReviewResult(
+        pr_url=args.pr,
+        pr_number=pr_number,
+        findings=all_findings,
+        agents_run=agent_ids_run,
+        execution_time_seconds=execution_time_seconds,
+        total_findings=len(all_findings),
+        critical_count=critical_count,
+        high_count=high_count,
+        semantic_regression_detected=semantic_regression_detected,
+        ffi_risk_detected=ffi_risk_detected,
+        comment_markdown=Renderer().render(temp_result)
+    )
 
     # Output results
     total_time = time.time() - start_time

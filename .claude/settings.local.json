@@ -37,7 +37,16 @@
       "Bash(wc -l qiskitsage/*.py)",
       "Bash(PYTHONPATH=/c/qiskit2.0 timeout 300 python main.py --pr \"https://github.com/Qiskit/qiskit/pull/15847\" --verbose)",
       "Bash(tee final_complete.txt)",
-      "Bash(export PYTHONPATH=/c/qiskit2.0)"
+      "Bash(export PYTHONPATH=/c/qiskit2.0)",
+      "Bash(PYTHONPATH=/c/qiskit2.0 timeout 180 python -u main.py --pr \"https://github.com/Qiskit/qiskit/pull/15847\" --verbose)",
+      "Bash(ls:*)",
+      "Bash(bash APPLY_FIXES.sh)",
+      "Bash(tee FIX_LOG.txt)",
+      "Bash(PYTHONPATH=. python -u main.py --pr \"https://github.com/Qiskit/qiskit/pull/15847\" --verbose)",
+      "Bash(unix2dos main.py)",
+      "Bash(sed -i 's/$/\\\\r/' main.py)",
+      "Bash(git checkout:*)",
+      "Bash(python3:*)"
     ]
   }
 }

@@ -129,6 +129,7 @@ final_analysis.txt
 final_complete.txt
 full_output.txt
 test_output.txt
+*.txt
 main.py.backup
 main.py.fixed
 *.swp

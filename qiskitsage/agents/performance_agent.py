@@ -30,7 +30,14 @@ class PerformanceAgent(BaseAgent):
             ]
         )
 
-        content = resp if isinstance(resp, str) else (resp.content[0].text if hasattr(resp.content[0], 'text') else str(resp.content[0])) if hasattr(resp.content[0], 'text') else str(resp.content[0])
+        # Parse JSON response
+        if isinstance(resp, str):
+            content = resp
+        elif hasattr(resp, 'content') and isinstance(resp.content, list) and len(resp.content) > 0:
+            # Use getattr to safely extract text, fallback to str representation
+            content = getattr(resp.content[0], 'text', str(resp.content[0]))
+        else:
+            content = str(resp)
 
         # Strip ```json fences
         if content.strip().startswith('```'):

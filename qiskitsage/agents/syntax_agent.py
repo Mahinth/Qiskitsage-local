@@ -27,13 +27,17 @@ class SyntaxAgent(BaseAgent):
             ]
         )
 
-        # Parse JSON response - handle both response formats
-        if hasattr(resp.content[0], 'text'):
-            content = resp if isinstance(resp, str) else (resp.content[0].text if hasattr(resp.content[0], 'text') else str(resp.content[0])) if hasattr(resp.content[0], 'text') else str(resp.content[0])
-        else:
-            # Fallback: content might be directly accessible
-            content = str(resp.content[0])
+        # Parse JSON response
 
+        if isinstance(resp, str):
+            content = resp
+        elif hasattr(resp, 'content') and isinstance(resp.content, list):
+            if hasattr(resp.content[0], 'text'):
+                content = resp.content[0].text
+            else:
+                content = str(resp.content[0])
+        else:
+            content = str(resp)
         # Strip ```json fences if present
         if content.strip().startswith('```'):
             if '```json' in content:

@@ -3,6 +3,7 @@ from .base_agent import BaseAgent
 from ..models import Finding, Severity, Category
 from ..context_graph import ContextGraph
 from ..prompts.semantic_checker import select_probes_for_graph, run_probe
+from ..config import FIDELITY_THRESHOLD
 
 class SemanticAgent(BaseAgent):
     agent_id = 'SA-SEM'
@@ -33,7 +34,7 @@ class SemanticAgent(BaseAgent):
                     file='',
                     line=None,
                     title=f"Semantic regression detected in probe: {probe_name}",
-                    description=f"Fidelity {result.fidelity:.4f} below threshold {config.FIDELITY_THRESHOLD}. {self.PROBE_ISSUE_MAP.get(probe_name, '')}",
+                    description=f"Fidelity {result.fidelity:.4f} below threshold {FIDELITY_THRESHOLD}. {self.PROBE_ISSUE_MAP.get(probe_name, '')}",
                     suggestion="Review transpiler changes for correctness",
                     evidence=f"Probe {probe_name} fidelity dropped to {result.fidelity:.4f}",
                     confidence=0.98,
