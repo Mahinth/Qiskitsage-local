@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python.exe -c \"with open\\('qiskitsage/agents/judge_agent.py', encoding='utf-8'\\) as f: lines = f.readlines\\(\\); print\\(''.join\\(f'{i+1:3d}: {repr\\(l\\)}' for i,l in enumerate\\(lines[:15]\\)\\)\\)\")",
+      "Bash(python -m py_compile main.py examples.py qiskitsage/*.py tests/*.py)",
+      "Bash(python main.py --help)",
+      "Bash(python -c \"import sys; print\\(''''Python version:'''', sys.version\\)\")",
+      "Bash(pip list:*)",
+      "Bash(python:*)",
+      "Bash(xargs ls:*)",
+      "Bash(pip show:*)",
+      "Bash(else echo:*)",
+      "Bash(fi)",
+      "Bash(python -c \"import os; env_ok=set\\([''''ANTHROPIC_API_KEY'''',''''GITHUB_TOKEN'''']\\).intersection\\(os.environ.keys\\(\\)\\); print\\(f''''✓ Found {len\\(env_ok\\)} required env vars'''' if env_ok else ''''✗ Missing required env vars''''\\)\")",
+      "Bash(ls -1 qiskitsage/*.py)",
+      "Bash(ls -1 qiskitsage/agents/*.py)",
+      "Bash(grep -r \"TODO\\\\|FIXME\\\\|XXX\\\\|HACK\\\\|BUG\\\\|NOTE:\" qiskitsage/ --include=*.py)",
+      "Bash(ls -la qiskitsage/*.py)",
+      "Bash(ls qiskitsage/*.py)",
+      "Bash(grep -r \"from qiskitsage import orchestrator\\\\|from qiskitsage import quality_gate\\\\|from qiskitsage import renderer\\\\|import orchestrator\\\\|import quality_gate\\\\|import renderer\" *.py qiskitsage/*.py)",
+      "Bash(echo \"  python main.py --pr \"\"https://github.com/Qiskit/qiskit/pull/12345\"\" --verbose\")",
+      "Bash(echo \"  ✓ Replaced with ASCII-safe alternatives [OK], [INFO], [ERROR], ->\")",
+      "Bash(echo \"  • ❌ -> [ERROR]\")",
+      "Bash(echo \"  • ✓  -> [OK]\")",
+      "Bash(echo \"  • 🔍 -> [INFO]\")",
+      "Bash(echo \"  • ℹ️ -> [INFO]\")",
+      "Bash(python -c \":*)",
+      "Bash(curl -s -H \"Accept: application/vnd.github+json\" \"https://api.github.com/repos/Qiskit/qiskit/pulls?state=open&per_page=5\")",
+      "Bash(echo \"python main.py --pr \"\"https://github.com/Qiskit/qiskit/pull/15847\"\" --verbose\")",
+      "Bash(echo \"python main.py --pr \"\"https://github.com/Qiskit/qiskit/pull/15845\"\" --verbose\")",
+      "Bash(echo \"python main.py --pr \"\"https://github.com/Qiskit/qiskit/pull/15844\"\" --verbose\")",
+      "Bash(tee full_output.txt)",
+      "Bash(grep:*)",
+      "Bash(tee complete_analysis.txt)",
+      "Bash(PYTHONPATH=/c/qiskit2.0 timeout 180 python main.py --pr \"https://github.com/Qiskit/qiskit/pull/15847\" --verbose)",
+      "Bash(tee final_analysis.txt)",
+      "Bash(wc -l qiskitsage/*.py)",
+      "Bash(PYTHONPATH=/c/qiskit2.0 timeout 300 python main.py --pr \"https://github.com/Qiskit/qiskit/pull/15847\" --verbose)",
+      "Bash(tee final_complete.txt)",
+      "Bash(export PYTHONPATH=/c/qiskit2.0)"
+    ]
+  }
+}
