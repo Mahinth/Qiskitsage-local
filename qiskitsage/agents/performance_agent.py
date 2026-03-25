@@ -18,26 +18,9 @@ class PerformanceAgent(BaseAgent):
         # Static analysis: call-graph complexity check
         findings.extend(self._check_cascade_complexity(graph))
 
-        # LLM-based analysis
+        # LLM-based analysis via Ollama
         user_prompt = build_perf_user_prompt(graph)
-        resp = self.client.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-            system=PERF_SYSTEM_PROMPT,
-            messages=[
-                {'role': 'user', 'content': user_prompt}
-            ]
-        )
-
-        # Parse JSON response
-        if isinstance(resp, str):
-            content = resp
-        elif hasattr(resp, 'content') and isinstance(resp.content, list) and len(resp.content) > 0:
-            # Use getattr to safely extract text, fallback to str representation
-            content = getattr(resp.content[0], 'text', str(resp.content[0]))
-        else:
-            content = str(resp)
+        content = self._llm_call(PERF_SYSTEM_PROMPT, user_prompt)
 
         # Strip ```json fences
         if content.strip().startswith('```'):

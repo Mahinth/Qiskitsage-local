@@ -78,26 +78,9 @@ class FFIAgent(BaseAgent):
                         rust_severity='MEMORY'
                     ))
 
-        # LLM-based analysis for deeper patterns
+        # LLM-based analysis via Ollama
         user_prompt = build_ffi_user_prompt(graph)
-        resp = self.client.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-            system=FFI_SYSTEM_PROMPT,
-            messages=[
-                {'role': 'user', 'content': user_prompt}
-            ]
-        )
-
-        # Parse JSON response
-        if isinstance(resp, str):
-            content = resp
-        elif hasattr(resp, 'content') and isinstance(resp.content, list) and len(resp.content) > 0:
-            # Use getattr to safely extract text, fallback to str representation
-            content = getattr(resp.content[0], 'text', str(resp.content[0]))
-        else:
-            content = str(resp)
+        content = self._llm_call(FFI_SYSTEM_PROMPT, user_prompt)
 
         # Strip ```json fences
         if content.strip().startswith('```'):

@@ -2,9 +2,11 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-ANTHROPIC_API_KEY = os.environ['ANTHROPIC_API_KEY']
 GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
-LLM_MODEL = 'claude-sonnet-4-20250514'
+
+# Ollama local LLM settings
+OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://localhost:11434/v1')
+OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen2.5-coder:7b')
 LLM_MAX_TOKENS = 4096
 LLM_TEMPERATURE = 0.1
 MIN_CONFIDENCE = 0.70

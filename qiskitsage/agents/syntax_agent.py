@@ -16,25 +16,8 @@ class SyntaxAgent(BaseAgent):
         # Build prompt from graph
         user_prompt = build_syntax_user_prompt(graph)
 
-        # Call Anthropic API
-        resp = self.client.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-            system=SYNTAX_SYSTEM_PROMPT,
-            messages=[
-                {'role': 'user', 'content': user_prompt}
-            ]
-        )
-
-        # Parse JSON response
-        if isinstance(resp, str):
-            content = resp
-        elif hasattr(resp, 'content') and isinstance(resp.content, list) and len(resp.content) > 0:
-            # Use getattr to safely extract text, fallback to str representation
-            content = getattr(resp.content[0], 'text', str(resp.content[0]))
-        else:
-            content = str(resp)
+        # Call LLM via Ollama
+        content = self._llm_call(SYNTAX_SYSTEM_PROMPT, user_prompt)
 
         # Strip ```json fences if present
         if content.strip().startswith('```'):
