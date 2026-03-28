@@ -7,31 +7,35 @@ class BaseAgent(ABC):
     agent_id: str = 'BASE'
 
     def __init__(self):
-        from openai import OpenAI
+        import ollama
         from .. import config
-        self.client = OpenAI(
-            base_url=config.OLLAMA_BASE_URL,
-            api_key="ollama",  # Ollama doesn't require a real key
-        )
+        # Create a client pointing to the specific base url
+        host = config.OLLAMA_BASE_URL.replace('/v1', '')
+        self.client = ollama.Client(host=host)
         self.model = config.OLLAMA_MODEL
         self.max_tokens = config.LLM_MAX_TOKENS
         self.temperature = config.LLM_TEMPERATURE
 
     def _llm_call(self, system: str, user_prompt: str) -> str:
         """
-        Unified LLM call using OpenAI-compatible Ollama endpoint.
+        Unified LLM call using native Ollama client.
         Returns the raw text content of the response.
         """
-        resp = self.client.chat.completions.create(
+        resp = self.client.chat(
             model=self.model,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user_prompt},
-            ]
+            ],
+            format='json',
+            options={
+                "temperature": self.temperature,
+                "num_predict": self.max_tokens
+            }
         )
-        return resp.choices[0].message.content or ""
+        content = resp.get('message', {}).get('content', '')
+        # print(f"DEBUG LLM OUTPUT: {content}")
+        return content
 
     @abstractmethod
     def review(self, graph: ContextGraph) -> List[Finding]:

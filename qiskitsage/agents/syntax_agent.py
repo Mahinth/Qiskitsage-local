@@ -25,6 +25,8 @@ class SyntaxAgent(BaseAgent):
                 content = content.split('```json')[1].split('```')[0].strip()
             else:
                 content = content.split('```')[1].split('```')[0].strip()
+        
+        # print("DEBUG SYNTAX CONTENT:", content)
 
         try:
             data = json.loads(content.strip())

@@ -28,6 +28,23 @@ class GitHubClient:
             'repo': repo
         }
 
+    def fetch_issue_data(self, issue_url: str) -> dict:
+        """Parse URL and fetch Issue metadata."""
+        parts = issue_url.split('/')
+        owner = parts[-4]
+        repo_name = parts[-3]
+        issue_number = int(parts[-1])
+
+        repo = self.g.get_repo(f'{owner}/{repo_name}')
+        issue = repo.get_issue(issue_number)
+
+        return {
+            'issue_number': issue_number,
+            'issue_title': issue.title,
+            'issue_body': issue.body or '',
+            'repo': repo
+        }
+
     def fetch_full_file(self, repo, file_path: str, ref: str) -> Optional[str]:
         """Fetch complete file content at specific ref."""
         try:

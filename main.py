@@ -39,8 +39,12 @@ Examples:
     parser.add_argument(
         "--pr", "-p",
         type=str,
-        required=True,
         help="GitHub PR URL to review (e.g., https://github.com/Qiskit/qiskit/pull/12345)"
+    )
+    parser.add_argument(
+        "--issue", "-i",
+        type=str,
+        help="GitHub Issue URL to analyze and generate code for (e.g., https://github.com/Qiskit/qiskit/issues/15870)"
     )
     parser.add_argument(
         "--verbose", "-v",
@@ -64,6 +68,53 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    if not args.pr and not args.issue:
+        print("[ERROR] Error: Must provide either --pr or --issue.", file=sys.stderr)
+        sys.exit(1)
+
+    if args.issue:
+        from qiskitsage.github_client import GitHubClient
+        from qiskitsage.agents.issue_agent import IssueAgent
+
+        if not args.issue.startswith("https://github.com/") or "/issues/" not in args.issue:
+            print("[ERROR] Error: Invalid Issue URL. Must be a GitHub Issue URL.", file=sys.stderr)
+            sys.exit(1)
+            
+        print(f"[INFO] Analyzing Issue: {args.issue}")
+        start_time = time.time()
+        
+        gh = GitHubClient()
+        try:
+            issue_data = gh.fetch_issue_data(args.issue)
+        except Exception as e:
+            print(f"[ERROR] Error fetching issue data: {e}", file=sys.stderr)
+            sys.exit(1)
+            
+        agent = IssueAgent()
+        if args.verbose:
+            print("   -> Running code generation with Ollama...")
+            
+        findings = agent.review(issue_data)
+        
+        print("\n" + "="*80)
+        print(f"[SUMMARY] QISKITSAGE ISSUE ANALYSIS (OLLAMA GENERATED)")
+        print("="*80)
+        print(f"Issue: {args.issue}")
+        print(f"Title: {issue_data['issue_title']}")
+        print(f"Analysis completed in {time.time() - start_time:.1f}s")
+        print(f"Total fixes generated: {len(findings)}")
+        print("\n" + "="*80)
+        
+        for finding in findings:
+            print(f"\n💡 {finding.category.value} FIX: {finding.title}")
+            print(f"   Target File: {finding.file}")
+            print(f"   Reasoning: {finding.description}")
+            if finding.suggestion:
+                print(f"\n   --- GENERATED CODE FIX ---\n{finding.suggestion}")
+                print(f"   --------------------------")
+                
+        sys.exit(0)
 
     if not args.pr.startswith("https://github.com/") or "/pull/" not in args.pr:
         print("[ERROR] Error: Invalid PR URL. Must be a GitHub PR URL.", file=sys.stderr)
