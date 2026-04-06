@@ -41,9 +41,16 @@ We have refactored the agent architecture to support local inference:
 - **SemanticAgent**: Remains a hard-coded local probe that executes real Qiskit quantum circuits to verify fidelity.
 
 ## 🏃 Running the Project
-Ensure Ollama is running (`ollama serve`), then run the CLI as usual:
+Ensure Ollama is running (`ollama serve`), then run the CLI using either a Pull Request or Issue URL.
+
+**To analyze a Pull Request (PR):**
 ```bash
 python main.py --pr "https://github.com/Qiskit/qiskit/pull/15847" --verbose
+```
+
+**To generate code fixes from an Issue:**
+```bash
+python main.py --issue "https://github.com/Qiskit/qiskit/issues/15870" --verbose
 ```
 
 ---
