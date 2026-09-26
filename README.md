@@ -153,7 +153,7 @@ pytest tests/
 1. Ensure all Python files follow Google Docstring style
 2. Add type hints for all public functions
 3. Maintain test coverage for new features
-4. Update this README for architectural changes
+4. Update this README for architectural changes 
 
 ## License
 
