@@ -1,4 +1,4 @@
-# QiskitSage 🤖🔬
+# QiskitSage 
 
 An intelligent code review tool that uses Anthropic's Claude to analyze Qiskit pull requests and identify potential issues.
 
